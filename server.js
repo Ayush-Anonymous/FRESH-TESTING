@@ -1,9 +1,14 @@
 /**
- * Hostinger Compatible Express Server
+ * Hostinger Production-Ready Express Server
  * Entry Point: server.js at root level
+ * ❌ NO FALLBACKS - Strictly uses ENV variables
  */
 
-require('dotenv').config();
+// Only load dotenv in development (Hostinger uses dashboard ENV)
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
@@ -11,6 +16,17 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ==================== DEBUG LOGS ====================
+console.log('========== ENV DEBUG ==========');
+console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+console.log('PORT:', process.env.PORT);
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD ? 'LOADED ✅' : 'NOT LOADED ❌');
+console.log('DB_NAME:', process.env.DB_NAME);
+console.log('DB_PORT:', process.env.DB_PORT);
+console.log('===============================');
 
 // Middleware
 app.use(cors({
@@ -28,16 +44,24 @@ let pool = null;
 let dbConnected = false;
 
 async function initDatabase() {
+    // Check if required ENV variables are present
+    if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_NAME) {
+        console.error('❌ Missing required database environment variables!');
+        console.error('Required: DB_HOST, DB_USER, DB_PASSWORD, DB_NAME');
+        dbConnected = false;
+        return;
+    }
+
     try {
+        // ❌ NO FALLBACKS - Strictly use ENV variables
         pool = mysql.createPool({
-            host: process.env.DB_HOST || 'localhost',
-            user: process.env.DB_USER || 'root',
-            password: process.env.DB_PASSWORD || '',
-            database: process.env.DB_NAME || 'test_db',
-            port: process.env.DB_PORT || 3306,
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            port: Number(process.env.DB_PORT) || 3306,
             waitForConnections: true,
-            connectionLimit: 10,
-            queueLimit: 0
+            connectionLimit: 5
         });
 
         // Test connection
@@ -70,7 +94,13 @@ app.get('/health', (req, res) => {
     res.json({
         status: 'SERVER ALIVE',
         timestamp: new Date().toISOString(),
-        database: dbConnected ? 'connected' : 'disconnected'
+        database: dbConnected ? 'connected' : 'disconnected',
+        env: {
+            DB_HOST: process.env.DB_HOST ? 'SET' : 'NOT SET',
+            DB_USER: process.env.DB_USER ? 'SET' : 'NOT SET',
+            DB_PASSWORD: process.env.DB_PASSWORD ? 'SET' : 'NOT SET',
+            DB_NAME: process.env.DB_NAME ? 'SET' : 'NOT SET'
+        }
     });
 });
 
@@ -80,7 +110,7 @@ app.get('/api/db-test', async (req, res) => {
         if (!pool) {
             return res.status(503).json({
                 success: false,
-                message: 'Database not configured'
+                message: 'Database not configured - check environment variables'
             });
         }
 
@@ -200,7 +230,6 @@ async function startServer() {
 ║     🚀 HOSTINGER TEST SERVER RUNNING       ║
 ╠════════════════════════════════════════════╣
 ║  Port: ${PORT}                               
-║  Health: http://localhost:${PORT}/health     
 ║  Database: ${dbConnected ? '✅ Connected' : '❌ Not Connected'}        
 ╚════════════════════════════════════════════╝
     `);
