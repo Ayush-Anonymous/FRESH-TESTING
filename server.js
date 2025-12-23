@@ -47,29 +47,27 @@ let pool = null;
 let dbConnected = false;
 
 async function initDatabase() {
-    // Check if required ENV variables are present
-    if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_NAME) {
-        console.error('❌ Missing required database environment variables!');
-        console.error('Required: DB_HOST, DB_USER, DB_PASSWORD, DB_NAME');
-        dbConnected = false;
-        return;
-    }
+    // TEMPORARY HARDCODE for Hostinger testing (ENV not working)
+    const DB_CONFIG = {
+        host: process.env.DB_HOST || '193.203.184.211',
+        user: process.env.DB_USER || 'u662005344_root',
+        password: process.env.DB_PASSWORD || 'User@QWERT1',
+        database: process.env.DB_NAME || 'u662005344_test_db',
+        port: Number(process.env.DB_PORT) || 3306
+    };
+
+    console.log('🔧 Using DB Config:', {
+        host: DB_CONFIG.host,
+        user: DB_CONFIG.user,
+        database: DB_CONFIG.database,
+        password: DB_CONFIG.password ? '***SET***' : 'EMPTY'
+    });
 
     try {
-        // ❌ NO FALLBACKS - Strictly use ENV variables
-        // Added SSL and timeout for remote Hostinger MySQL
         pool = mysql.createPool({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-            port: Number(process.env.DB_PORT) || 3306,
+            ...DB_CONFIG,
             waitForConnections: true,
-            connectionLimit: 5,
-            connectTimeout: 30000,
-            ssl: {
-                rejectUnauthorized: false
-            }
+            connectionLimit: 5
         });
 
         // Test connection
@@ -90,9 +88,6 @@ async function initDatabase() {
         dbConnected = true;
     } catch (error) {
         console.error('❌ MySQL connection failed:', error.message);
-        console.error('Full error:', JSON.stringify(error, null, 2));
-        console.error('Error code:', error.code);
-        console.error('Error errno:', error.errno);
         dbConnected = false;
         // Don't crash - allow server to start without DB
     }
