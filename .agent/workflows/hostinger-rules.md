@@ -4,107 +4,75 @@ description: Hostinger Business Web Hosting rules and limitations - ALWAYS follo
 
 # 🎯 HOSTINGER BUSINESS WEB HOSTING - MANDATORY RULES
 
-## 📊 ACCOUNT LIMITS
-- **Max 5 Node.js apps** per account
-- **3 GB RAM** limit
-- **50 GB SSD** storage
-- **600,000 inodes** (files/folders)
-- **Shared CPU** resources
+## 📊 KEY LIMITATIONS & BOUNDARIES
 
-## ✅ ENVIRONMENT VARIABLES
-1. **ONLY hPanel ENV variables work** - `.env` files do NOT work on production
-2. **Always set ENV via Hostinger Dashboard** → Environment Variables section
-3. **Use hardcoded fallbacks** in code:
-   ```javascript
-   host: process.env.DB_HOST || 'hardcoded_value'
-   ```
-4. **After changing ENV** → Must click **"Save and redeploy"** (not just Save)
-5. **Don't set PORT manually** → Hostinger auto-injects it
+| Limit | Value |
+|-------|-------|
+| **Node.js Apps** | Up to 5 per account |
+| **RAM** | 3 GB |
+| **Storage** | 50 GB SSD |
+| **Inodes** | 600,000 files/folders |
+| **CPU** | Shared resources |
+
+## ⚠️ RESTRICTIONS
+
+1. **No Root Access** - Cannot install system-wide packages or modify server OS settings
+2. **Environment Variables** - Must be set through hPanel; `.env` files may NOT work as expected
+3. **No Custom Daemons** - Only web-facing apps (HTTP/HTTPS); background daemons or persistent workers NOT allowed
+4. **Limited Module Support** - Only npm packages that don't require native system dependencies
+5. **Process Management** - Platform manages app restarts; PM2 or custom process managers NOT supported
+6. **Network Restrictions** - Outbound networking may be limited for security
+7. **No SSH Root** - SSH available but NOT with root privileges
 
 ## ✅ DEPLOYMENT RULES
+
 1. **Rename `build` script** → Use `client:build` (Hostinger reacts to "build" keyword)
-2. **Entry point must be `server.js`** at root level with `"main": "server.js"`
-3. **Pre-build frontend** → Commit `dist/` folder (Hostinger may not build)
-4. **package.json scripts**:
+2. **Entry point**: `server.js` at root with `"main": "server.js"` in package.json
+3. **Pre-build frontend** → Commit `dist/` folder
+4. **Don't set PORT** → Hostinger auto-injects it
+5. **package.json**:
    ```json
-   "scripts": {
-     "start": "node server.js",
-     "client:build": "cd client && npm install && npm run build"
+   {
+     "main": "server.js",
+     "scripts": {
+       "start": "node server.js",
+       "client:build": "cd client && npm install && npm run build"
+     }
    }
    ```
 
 ## ✅ ALLOWED STACK
 - **Frontend**: React, Vite, Vue, Angular, Next.js, Parcel
 - **Backend**: Express.js, Next.js API routes
-- **Database**: MySQL only (Hostinger provided, use mysql2 package)
+- **Database**: MySQL only (use mysql2 package)
 
 ## ❌ NEVER USE
 - Firebase, Supabase, MongoDB, PostgreSQL
-- Serverless-only backends
-- Platform-locked backends
 - PM2 or custom process managers
-- Background daemons or persistent workers
+- Background daemons/workers
 - Native modules needing OS dependencies
 
-## ⚠️ HARD LIMITATIONS (Business Web Hosting)
-- **No root access** - Cannot install system-wide packages
-- **No custom daemons** - Only web-facing apps (HTTP/HTTPS)
-- **No PM2** - Platform manages app restarts
-- **Limited npm packages** - Only packages without native dependencies
-- **Network restrictions** - Outbound networking may be limited
-- **No SSH root** - SSH available but not with root privileges
-- **Long-running tasks throttled** - Resource-intensive apps may be stopped
-- **Managed environment** - Easy setup via hPanel, no server maintenance
-- **Limited to hPanel features** - Can't customize beyond hPanel options
-
-## 🔧 MYSQL CONNECTION TEMPLATE
+## 🔧 MYSQL TEMPLATE (with fallbacks)
 ```javascript
-// ALWAYS use fallbacks for Hostinger
 const DB_CONFIG = {
-  host: process.env.DB_HOST || 'YOUR_HOSTINGER_IP',
-  user: process.env.DB_USER || 'YOUR_DB_USER',
-  password: process.env.DB_PASSWORD || 'YOUR_DB_PASSWORD',
-  database: process.env.DB_NAME || 'YOUR_DB_NAME',
+  host: process.env.DB_HOST || 'YOUR_IP',
+  user: process.env.DB_USER || 'YOUR_USER',
+  password: process.env.DB_PASSWORD || 'YOUR_PASS',
+  database: process.env.DB_NAME || 'YOUR_DB',
   port: Number(process.env.DB_PORT) || 3306
 };
 ```
 
-## 📋 DEPLOYMENT CHECKLIST
-- [ ] `server.js` at root level
-- [ ] `package.json` has `"main": "server.js"` and `"start": "node server.js"`
-- [ ] No `build` script (rename to `client:build`)
-- [ ] Frontend pre-built and `dist/` committed
-- [ ] MySQL credentials with hardcoded fallbacks
-- [ ] `/health` endpoint returns `SERVER ALIVE`
-- [ ] CORS configured
-- [ ] Environment variables set in Hostinger hPanel
-- [ ] No more than 5 Node.js apps on account
-- [ ] App uses less than 3GB RAM
+## 📋 CHECKLIST
+- [ ] `server.js` at root
+- [ ] No `build` script (use `client:build`)
+- [ ] `dist/` committed
+- [ ] MySQL with hardcoded fallbacks
+- [ ] `/health` endpoint
+- [ ] ENV set in hPanel
 
----
-
-## 🆚 BUSINESS WEB HOSTING vs VPS COMPARISON
-
-| Feature | Business Web Hosting | VPS |
-|---------|---------------------|-----|
-| **Root Access** | ❌ No | ✅ Full |
-| **Node.js Apps** | Max 5 | Unlimited |
-| **RAM** | 3 GB limit | Custom |
-| **PM2/Process Managers** | ❌ No | ✅ Yes |
-| **Background Jobs** | ❌ No | ✅ Yes |
-| **Native Modules** | ❌ Limited | ✅ Any |
-| **Server Management** | ✅ Managed | ❌ Manual |
-| **Custom System Packages** | ❌ No | ✅ Yes |
-| **Setup Difficulty** | Easy | Advanced |
-
-### 📌 When to Use Each:
-- **Business Web Hosting**: Simple production-ready web apps with minimal server management
-- **VPS**: Advanced, resource-intensive, or custom Node.js deployments needing full control
-
-### 💡 VPS UPGRADE NEEDED FOR:
-- Custom builds or heavy processing
-- Background jobs or workers
-- Custom process managers (PM2)
+## 💡 FOR ADVANCED NEEDS → UPGRADE TO VPS
+- Custom builds, background jobs, heavy processing
+- PM2 or custom process managers
 - Native module dependencies
-- Persistent daemons
 - More than 5 Node.js apps
