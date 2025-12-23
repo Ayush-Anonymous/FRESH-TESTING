@@ -44,9 +44,9 @@ description: Hostinger Business Web Hosting rules and limitations - ALWAYS follo
 - Platform-locked backends
 - PM2 or custom process managers
 - Background daemons or persistent workers
-- Native system dependencies
+- Native modules needing OS dependencies
 
-## ⚠️ HARD LIMITATIONS
+## ⚠️ HARD LIMITATIONS (Business Web Hosting)
 - **No root access** - Cannot install system-wide packages
 - **No custom daemons** - Only web-facing apps (HTTP/HTTPS)
 - **No PM2** - Platform manages app restarts
@@ -54,6 +54,8 @@ description: Hostinger Business Web Hosting rules and limitations - ALWAYS follo
 - **Network restrictions** - Outbound networking may be limited
 - **No SSH root** - SSH available but not with root privileges
 - **Long-running tasks throttled** - Resource-intensive apps may be stopped
+- **Managed environment** - Easy setup via hPanel, no server maintenance
+- **Limited to hPanel features** - Can't customize beyond hPanel options
 
 ## 🔧 MYSQL CONNECTION TEMPLATE
 ```javascript
@@ -79,9 +81,30 @@ const DB_CONFIG = {
 - [ ] No more than 5 Node.js apps on account
 - [ ] App uses less than 3GB RAM
 
-## 💡 VPS UPGRADE NEEDED FOR:
+---
+
+## 🆚 BUSINESS WEB HOSTING vs VPS COMPARISON
+
+| Feature | Business Web Hosting | VPS |
+|---------|---------------------|-----|
+| **Root Access** | ❌ No | ✅ Full |
+| **Node.js Apps** | Max 5 | Unlimited |
+| **RAM** | 3 GB limit | Custom |
+| **PM2/Process Managers** | ❌ No | ✅ Yes |
+| **Background Jobs** | ❌ No | ✅ Yes |
+| **Native Modules** | ❌ Limited | ✅ Any |
+| **Server Management** | ✅ Managed | ❌ Manual |
+| **Custom System Packages** | ❌ No | ✅ Yes |
+| **Setup Difficulty** | Easy | Advanced |
+
+### 📌 When to Use Each:
+- **Business Web Hosting**: Simple production-ready web apps with minimal server management
+- **VPS**: Advanced, resource-intensive, or custom Node.js deployments needing full control
+
+### 💡 VPS UPGRADE NEEDED FOR:
 - Custom builds or heavy processing
 - Background jobs or workers
 - Custom process managers (PM2)
 - Native module dependencies
 - Persistent daemons
+- More than 5 Node.js apps
