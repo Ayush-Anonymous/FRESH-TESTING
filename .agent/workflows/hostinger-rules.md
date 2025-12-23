@@ -4,10 +4,17 @@ description: Hostinger Business Web Hosting rules and limitations - ALWAYS follo
 
 # 🎯 HOSTINGER BUSINESS WEB HOSTING - MANDATORY RULES
 
+## 📊 ACCOUNT LIMITS
+- **Max 5 Node.js apps** per account
+- **3 GB RAM** limit
+- **50 GB SSD** storage
+- **600,000 inodes** (files/folders)
+- **Shared CPU** resources
+
 ## ✅ ENVIRONMENT VARIABLES
-1. **ONLY hPanel ENV variables persist** - `.env` files in code do NOT work on production
+1. **ONLY hPanel ENV variables work** - `.env` files do NOT work on production
 2. **Always set ENV via Hostinger Dashboard** → Environment Variables section
-3. **Use hardcoded fallbacks** in code when ENV is unreliable:
+3. **Use hardcoded fallbacks** in code:
    ```javascript
    host: process.env.DB_HOST || 'hardcoded_value'
    ```
@@ -15,8 +22,8 @@ description: Hostinger Business Web Hosting rules and limitations - ALWAYS follo
 5. **Don't set PORT manually** → Hostinger auto-injects it
 
 ## ✅ DEPLOYMENT RULES
-1. **Rename `build` script** → Use `client:build` or other name (Hostinger reacts to "build" keyword and treats as React app)
-2. **Entry point must be `server.js`** at root level with `"main": "server.js"` in package.json
+1. **Rename `build` script** → Use `client:build` (Hostinger reacts to "build" keyword)
+2. **Entry point must be `server.js`** at root level with `"main": "server.js"`
 3. **Pre-build frontend** → Commit `dist/` folder (Hostinger may not build)
 4. **package.json scripts**:
    ```json
@@ -35,14 +42,18 @@ description: Hostinger Business Web Hosting rules and limitations - ALWAYS follo
 - Firebase, Supabase, MongoDB, PostgreSQL
 - Serverless-only backends
 - Platform-locked backends
-- System-wide package installations
+- PM2 or custom process managers
+- Background daemons or persistent workers
+- Native system dependencies
 
-## ⚠️ LIMITATIONS
-- No root access
-- Strict CPU/RAM limits
-- Long-running or resource-intensive apps may be throttled or stopped
-- Some environment variable behaviors are restricted
-- Only Business, Cloud, and Agency plans support Node.js Web App
+## ⚠️ HARD LIMITATIONS
+- **No root access** - Cannot install system-wide packages
+- **No custom daemons** - Only web-facing apps (HTTP/HTTPS)
+- **No PM2** - Platform manages app restarts
+- **Limited npm packages** - Only packages without native dependencies
+- **Network restrictions** - Outbound networking may be limited
+- **No SSH root** - SSH available but not with root privileges
+- **Long-running tasks throttled** - Resource-intensive apps may be stopped
 
 ## 🔧 MYSQL CONNECTION TEMPLATE
 ```javascript
@@ -65,3 +76,12 @@ const DB_CONFIG = {
 - [ ] `/health` endpoint returns `SERVER ALIVE`
 - [ ] CORS configured
 - [ ] Environment variables set in Hostinger hPanel
+- [ ] No more than 5 Node.js apps on account
+- [ ] App uses less than 3GB RAM
+
+## 💡 VPS UPGRADE NEEDED FOR:
+- Custom builds or heavy processing
+- Background jobs or workers
+- Custom process managers (PM2)
+- Native module dependencies
+- Persistent daemons
