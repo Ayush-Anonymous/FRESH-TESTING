@@ -4,9 +4,7 @@
     "description": "Hostinger Testing Dashboard - React + Express + MySQL",
     "main": "server.js",
     "scripts": {
-        "start": "node server.js",
-        "dev": "node server.js",
-        "build": "cd client && npm install && npm run build"
+        "start": "node server.js"
     },
     "dependencies": {
         "cors": "^2.8.5",
