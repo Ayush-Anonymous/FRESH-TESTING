@@ -1,82 +1,91 @@
-# Hostinger Testing App
+# 🚀 Hostinger Testing Dashboard
 
-🚀 Full-stack testing dashboard for Hostinger deployment
+Full-stack testing app for Hostinger deployment - **React + Express + MySQL**
 
-## Tech Stack
-- **Frontend**: React + Vite
-- **Backend**: Express.js (Node.js)
-- **Database**: MySQL
+## 📁 Project Structure (Hostinger Ready)
+```
+├── server.js           ← Entry Point
+├── package.json        ← Dependencies
+├── .env.example        ← Environment template
+└── client/
+    ├── dist/           ← Pre-built frontend
+    └── src/            ← Source code
+```
 
-## Quick Start
+## 🚀 Quick Start (Local Development)
 
 ### 1. Install Dependencies
 ```bash
-# Install all dependencies
-npm run install:all
+npm install
+cd client && npm install
 ```
 
 ### 2. Configure Database
-Edit `server/.env` with your MySQL credentials:
+Create `.env` file with your MySQL credentials:
 ```env
 DB_HOST=localhost
-DB_USER=your_username
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=test_db
+DB_PORT=3306
+```
+
+### 3. Build Frontend
+```bash
+npm run build
+```
+
+### 4. Start Server
+```bash
+npm start
+```
+
+Open: http://localhost:3000
+
+---
+
+## ☁️ Hostinger Deployment
+
+### Step 1: Connect GitHub
+Link this repository in Hostinger Git deployment
+
+### Step 2: Set Environment Variables
+In Hostinger Dashboard → Environment Variables:
+```
+DB_HOST=your_hostinger_mysql_host
+DB_USER=your_username  
 DB_PASSWORD=your_password
 DB_NAME=your_database
 DB_PORT=3306
 ```
 
-### 3. Run Development Servers
+### Step 3: Deploy
+- Entry point: `server.js`
+- Build command: Not needed (dist already committed)
+- Start command: `npm start`
 
-**Terminal 1 - Backend:**
-```bash
-cd server
-npm run dev
-```
+---
 
-**Terminal 2 - Frontend:**
-```bash
-cd client
-npm run dev
-```
-
-### 4. Open Browser
-- Frontend: http://localhost:5173
-- Backend Health: http://localhost:3000/health
-
-## Hostinger Deployment
-
-### 1. Build Frontend
-```bash
-cd client
-npm run build
-```
-
-### 2. Upload to Hostinger
-Upload these folders to Hostinger:
-- `server/` (entire folder)
-- `client/dist/` (inside server folder or configure static serving)
-
-### 3. Configure Environment
-In Hostinger dashboard, set environment variables:
-- `PORT` (usually auto-set)
-- `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
-
-### 4. Start Application
-Entry point: `server/server.js`
-
-## API Endpoints
+## 🔌 API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/health` | Health check |
-| GET | `/api/db-test` | Database test |
+| GET | `/health` | Health check - returns `SERVER ALIVE` |
+| GET | `/api/db-test` | Test MySQL connection |
 | GET | `/api/messages` | Get all messages |
-| POST | `/api/messages` | Create message |
+| POST | `/api/messages` | Create new message |
 | DELETE | `/api/messages/:id` | Delete message |
 
-## Features
+---
+
+## ✨ Features
 - ✅ Frontend Test (React status)
-- ✅ Backend Test (Server health)
+- ✅ Backend Test (Express health check)
 - ✅ Database Test (MySQL connection)
 - 📝 Message System (CRUD with MySQL)
-- 🎨 Beautiful UI with glassmorphism
+- 🎨 Beautiful glassmorphism UI
+- 📱 Fully responsive
+
+---
+
+Made with ❤️ for Hostinger Deployment
