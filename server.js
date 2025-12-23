@@ -90,6 +90,9 @@ async function initDatabase() {
         dbConnected = true;
     } catch (error) {
         console.error('❌ MySQL connection failed:', error.message);
+        console.error('Full error:', JSON.stringify(error, null, 2));
+        console.error('Error code:', error.code);
+        console.error('Error errno:', error.errno);
         dbConnected = false;
         // Don't crash - allow server to start without DB
     }
