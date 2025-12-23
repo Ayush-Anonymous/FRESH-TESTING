@@ -15,12 +15,15 @@ const mysql = require('mysql2/promise');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// ❌ NO FALLBACK - Hostinger injects PORT
+const PORT = process.env.PORT;
 
 // ==================== DEBUG LOGS ====================
 console.log('========== ENV DEBUG ==========');
-console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
-console.log('PORT:', process.env.PORT);
+console.log('PORT FROM HOSTINGER:', process.env.PORT);
+console.log('ENV KEYS:', Object.keys(process.env));
+console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('DB_HOST:', process.env.DB_HOST);
 console.log('DB_USER:', process.env.DB_USER);
 console.log('DB_PASSWORD:', process.env.DB_PASSWORD ? 'LOADED ✅' : 'NOT LOADED ❌');
