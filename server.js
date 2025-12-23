@@ -57,6 +57,7 @@ async function initDatabase() {
 
     try {
         // ❌ NO FALLBACKS - Strictly use ENV variables
+        // Added SSL and timeout for remote Hostinger MySQL
         pool = mysql.createPool({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
@@ -64,7 +65,11 @@ async function initDatabase() {
             database: process.env.DB_NAME,
             port: Number(process.env.DB_PORT) || 3306,
             waitForConnections: true,
-            connectionLimit: 5
+            connectionLimit: 5,
+            connectTimeout: 30000,
+            ssl: {
+                rejectUnauthorized: false
+            }
         });
 
         // Test connection
