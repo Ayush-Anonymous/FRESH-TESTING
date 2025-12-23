@@ -1,0 +1,21 @@
+{
+    "name": "hostinger-testing-app",
+    "version": "1.0.0",
+    "description": "Full-stack testing app for Hostinger - React + Express + MySQL",
+    "scripts": {
+        "dev:server": "cd server && npm run dev",
+        "dev:client": "cd client && npm run dev",
+        "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+        "build": "cd client && npm run build",
+        "start": "cd server && npm start"
+    },
+    "keywords": [
+        "hostinger",
+        "react",
+        "express",
+        "mysql",
+        "testing"
+    ],
+    "author": "",
+    "license": "MIT"
+}
